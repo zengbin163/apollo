@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.product.BrandCategoryDao">
+	<select id="getCategoryListByBrandId" resultType="com.haitao.apollo.pojo.product.BrandCategory">
+		SELECT
+			t1.brand_id brandId,
+			t1.category_id categoryId,
+			t2.category_name categoryName
+		FROM
+			t_brand_category t1,
+			t_category t2
+		WHERE
+			t1.category_id = t2.id
+		AND t1.brand_id = #{brandId}	
+	</select>
+</mapper>

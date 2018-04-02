@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.purchaser.PurchaserCashDao">
+	<insert id="insertPurchaserCash" parameterType="com.haitao.apollo.vo.purchaser.PurchaserCashVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_purchaser_cash (
+			purchaser_id,
+			cash,
+			fund_type,
+			apply_status,
+			create_time,
+			modify_time
+		)values(
+			#{purchaserId},
+			#{cash},
+			#{fundType},
+			#{applyStatus},
+			#{createTime},
+			#{modifyTime}
+		)
+	</insert>
+	
+	<select id="getPurchaserCashListByApplyStatus" resultType="com.haitao.apollo.pojo.purchaser.PurchaserCash">
+	   SELECT t2.purchaser_name purchaserName,
+       		t2.id purchaserId,
+       		t2.alipay_account alipayAccount,
+       		t2.bank_account bankAccount,
+       		t1.id id,
+       		t1.cash cash,
+       		t1.fund_type fundType,
+       		ROUND(t1.cash/100, 2) cashYuan,
+       		t1.apply_status applyStatus,
+       		t1.create_time createTime,
+       		t1.finish_time finishTime
+  	   FROM t_purchaser_cash t1 join t_purchaser t2 on t1.purchaser_id= t2.id
+  	   WHERE t1.apply_status = #{applyStatus}
+  	</select>
+  	
+  	<update id="finishPurchaserCash" parameterType="int">
+  		update t_purchaser_cash 
+  			set modify_time=UNIX_TIMESTAMP()*1000,
+  				apply_status = 1
+		where id = #{id} and apply_status=0
+  	</update>
+</mapper>

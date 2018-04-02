@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.order.RefundOrderDao">
+	<insert id="insertRefundOrder" parameterType="com.haitao.apollo.vo.order.RefundOrderVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_refund_order (
+			postreward_id,
+			user_id,
+			pay_order_id,
+			refund_amount,
+			pay_serial_no,
+			create_time,
+			modify_time
+		)values(
+			#{postrewardId},
+			#{userId},
+			#{payOrderId},
+			#{refundAmount},
+			#{paySerialNo},
+			UNIX_TIMESTAMP()*1000,
+			UNIX_TIMESTAMP()*1000
+		)	
+	</insert>
+	
+	<update id="updateRefundOrderBySerialNo" parameterType="com.haitao.apollo.vo.order.RefundOrderVo">
+		update t_refund_order set modify_time=UNIX_TIMESTAMP()*1000
+			<if test="refundStatus!=null">
+				,refund_status = #{refundStatus}
+			</if>
+		where refund_serial_no = #{refundSerialNo}	
+	</update>
+</mapper>

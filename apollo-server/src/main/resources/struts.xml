@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN" "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<constant name="struts.convention.default.parent.package" value="apollo-default" />
+	<constant name="struts.convention.package.locators" value="web" />
+	<constant name="struts.convention.result.path" value="/WEB-INF/jsp/" />
+	<constant name="struts.convention.package.locators.basePackage" value="com.haitao.apollo.web" />
+	<constant name="struts.i18n.encoding" value="utf-8" />
+	<constant name="struts.enable.DynamicMethodInvocation" value="true" />
+    <constant name="struts.devMode" value="false" />
+	<constant name="struts.convention.action.suffix" value="Action" />  
+	<constant name="struts.action.extension" value="action,do" />
+	<constant name="struts.multipart.saveDir" value="/tmp" />
+
+	<package name="apollo-default" namespace="*" extends="convention-default">
+		<interceptors>
+			<interceptor name="exceptionInterceptor" class="com.haitao.apollo.web.interceptor.GlobalExceptionInterceptor"/>
+			<interceptor name="loginInterceptor" class="com.haitao.apollo.web.interceptor.GlobalLoginInterceptor"/>
+			<interceptor-stack name="webStack">
+				<interceptor-ref name="store">
+					<param name="operationMode">AUTOMATIC</param>
+				</interceptor-ref>
+				<interceptor-ref name="paramsPrepareParamsStack" />
+				<interceptor-ref name="exceptionInterceptor" />
+				<interceptor-ref name="loginInterceptor" />
+			</interceptor-stack>
+		</interceptors>
+
+		<default-interceptor-ref name="webStack" />
+
+		<global-exception-mappings>
+			<exception-mapping exception="java.lang.Exception" result="error" />
+		</global-exception-mappings>
+	</package>
+</struts>

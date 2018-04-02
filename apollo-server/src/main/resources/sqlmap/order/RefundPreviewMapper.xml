@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.order.RefundPreviewDao">
+	<insert id="insertRefundPreview" parameterType="com.haitao.apollo.vo.order.RefundPreviewVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_refund_preview (
+			postreward_id,
+			pay_order_id,
+			pay_serial_no,
+			create_time,
+			modify_time
+		)values(
+			#{postrewardId},
+			#{payOrderId},
+			#{paySerialNo},
+			UNIX_TIMESTAMP()*1000,
+			UNIX_TIMESTAMP()*1000
+		)	
+	</insert>
+	
+	<select id="getRefundPreviewByPayOrderId" resultType="com.haitao.apollo.pojo.order.RefundPreview">
+		select postreward_id postrewardId,
+			pay_order_id payOrderId,
+			pay_serial_no paySerialNo,
+			create_time createTime,
+			modify_time modifyTime
+		from t_refund_preview 
+		where pay_order_id=#{payOrderId}
+	</select>
+
+	<select id="getRefundPreviewList" resultType="com.haitao.apollo.pojo.order.RefundPreview">
+		select t1.postreward_id postrewardId,
+		       t1.pay_order_id payOrderId,
+		       t1.pay_serial_no paySerialNo,
+		       t1.create_time createTime,
+		       t2.pay_amount payAmount,
+		       t2.big_money bigMoney,
+		       t1.modify_time modifyTime
+		  from t_refund_preview t1,
+		       t_pay_order t2,
+		       t_sale_order t3,
+		       t_postreward t4
+		 where t1.pay_order_id= t2.id
+		   and t2.postreward_id= t3.postreward_id
+		   and t3.order_status= 205
+		   and t2.postreward_id= t4.id
+		   and t4.reward_status= 106
+		   and not exists(select 1 from t_refund_order a where a.pay_serial_no= t2.pay_serial_no)
+	</select>
+</mapper>

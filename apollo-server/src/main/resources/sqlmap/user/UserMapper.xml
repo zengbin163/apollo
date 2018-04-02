@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.user.UserDao">
+ 
+	<sql id="selectUserId">
+		select id id,
+			nick_name nickName,
+			mobile mobile,
+			password password,
+			register_time registerTime,
+			last_login_time lastLoginTime,
+			header_url headerUrl,
+			invite_code inviteCode,
+			modify_time modifyTime,
+			big_money bigMoney,
+			signature signature,
+			version version,
+			device_id deviceId,
+			is_forbid_post isForbidPost,
+			is_forbid_login isForbidLogin,
+			is_forbid_show isForbidShow,
+			token token
+		from t_user
+	</sql>
+
+	<select id="getUserListByPage" resultType="com.haitao.apollo.pojo.user.User">
+		<include refid="selectUserId" />
+		<if test="userVo.nickName!=null and userVo.nickName!=''">
+			where nick_name like #{userVo.nickName}  and is_active=1
+		</if>
+	</select>
+
+	<select id="getUserByMobileAndPassword" resultType="com.haitao.apollo.pojo.user.User">
+		<include refid="selectUserId" />
+		where mobile=#{mobile} and password=#{password} and is_active=1
+	</select>
+
+	<select id="getUserByInviteCode" resultType="com.haitao.apollo.pojo.user.User">
+		<include refid="selectUserId" />
+		where invite_code=#{inviteCode} and is_active=1
+	</select>
+
+	<select id="getUserListByPurchaserId" resultType="com.haitao.apollo.pojo.user.User">
+		select  t1.id id,
+				t1.nick_name nickName,
+				t1.mobile mobile,
+				t1.register_time registerTime,
+				t1.last_login_time lastLoginTime,
+				t1.header_url headerUrl,
+				t1.invite_code inviteCode,
+				t1.modify_time modifyTime,
+				t1.big_money bigMoney,
+				t1.signature signature,
+				t1.device_id deviceId,
+				t1.is_forbid_post isForbidPost,
+				t1.is_forbid_login isForbidLogin,
+				t1.is_forbid_show isForbidShow,
+				t1.token token
+		from  t_user t1,
+		      t_invitecode t2
+		where t1.invite_code= t2.invite_code
+		   and t1.is_active=1
+		   and t2.invite_role=0
+		   and t2.invite_id=#{purchaserId}
+	</select>
+
+	<select id="getUserByMobile" resultType="com.haitao.apollo.pojo.user.User">
+		<include refid="selectUserId" />
+		where mobile=#{mobile} and is_active=1
+	</select>
+
+	<select id="getUserById" resultType="com.haitao.apollo.pojo.user.User">
+		<include refid="selectUserId" />
+		where id=#{id} and is_active=1
+	</select>
+
+	<select id="getForbiddenUserList" resultType="com.haitao.apollo.pojo.user.User">
+		<include refid="selectUserId" />
+		where (is_forbid_post= 1 or is_forbid_login= 1 or is_forbid_show= 1) and is_active= 1
+	</select>
+
+	<insert id="insertUser" parameterType="com.haitao.apollo.vo.user.UserVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_user (
+			device_id,
+			nick_name,
+			mobile,
+			password,
+			register_time,
+			last_login_time,
+			header_url,
+			invite_code,
+			modify_time,
+			big_money,
+			version,
+			is_active
+		)
+		VALUES(
+			#{deviceId},
+			#{nickName},
+			#{mobile},
+			#{password},
+			#{registerTime},
+			#{lastLoginTime},
+			#{headerUrl},
+			#{inviteCode},
+			#{modifyTime},
+			#{bigMoney},
+			1,
+			1
+		)
+	</insert>
+	
+	<update id="updateUser" parameterType="com.haitao.apollo.vo.user.UserVo">
+		update t_user set modify_time = UNIX_TIMESTAMP()*1000
+		<if test="nickName!=null">
+			,nick_name = #{nickName}
+		</if>
+		<if test="password!=null">
+			,password = #{password}
+		</if>
+		<if test="lastLoginTime!=null">
+			,last_login_time = #{lastLoginTime}
+		</if>
+		<if test="headerUrl!=null">
+			,header_url = #{headerUrl}
+		</if>
+		<if test="signature!=null">
+			,signature = #{signature}
+		</if>
+		<if test="address!=null">
+			,address = #{address}
+		</if>
+		<if test="bigMoney!=null">
+			,big_money = #{bigMoney}
+		</if>
+		<if test="version!=null">
+			,version = #{version}
+		</if>
+		<if test="isActive!=null">
+			,is_active = #{isActive}
+		</if>
+		<if test="deviceId!=null">
+			,device_id = #{deviceId}
+		</if>
+		<if test="token!=null">
+			,token = #{token}
+		</if>
+		<if test="isForbidPost!=null">
+			,is_forbid_post = #{isForbidPost}
+		</if>
+		<if test="isForbidLogin!=null">
+			,is_forbid_login = #{isForbidLogin}
+		</if>
+		<if test="isForbidShow!=null">
+			,is_forbid_show = #{isForbidShow}
+		</if>
+		<![CDATA[
+			where id = #{id} and version < #{version} 
+		]]>	
+	</update>
+</mapper>

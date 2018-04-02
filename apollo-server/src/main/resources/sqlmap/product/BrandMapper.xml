@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.product.BrandDao">
+	<sql id="getBrand">
+		select id id,
+			brand_name brandName,
+			create_time createTime
+	    from t_brand
+	</sql>
+
+	<select id="getBrandById" resultType="com.haitao.apollo.pojo.product.Brand">
+		<include refid="getBrand" />
+		where id = #{brandId}
+	</select>
+	
+	<select id="getBrandList" resultType="com.haitao.apollo.pojo.product.Brand">
+		<include refid="getBrand" />
+	</select>
+</mapper>

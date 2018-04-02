@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.product.PurchaserCategoryDao">
+	<insert id="insertPurchaserCategoryBatch" parameterType="com.haitao.apollo.vo.product.PurchaserCategoryVo">
+		INSERT IGNORE INTO t_purchaser_category (
+			purchaser_id,
+			category_id,
+			is_deleted,
+			create_time,
+			modify_time
+		)
+		VALUES
+		<foreach collection="purchaserCategoryList" item="item" index ="index" separator=",">
+			(
+				#{item.purchaserId},
+				#{item.categoryId},
+				0,
+				#{item.createTime},
+				#{item.modifyTime}
+			)
+		</foreach>
+	</insert>
+
+    <select id="getCategoryListByPurchaserId" resultType="com.haitao.apollo.pojo.product.Category" >
+		SELECT
+			t1.id id,
+		    t1.category_name categoryName,
+		    (select count(*) from t_postreward t3 where t3.category_id=t1.id) sum
+		FROM
+			t_category t1,
+			t_purchaser_category t2
+		WHERE
+			t1.id = t2.category_id
+			AND t2.is_deleted = 0
+			AND t2.purchaser_id = #{purchaserId}
+	</select>
+	
+	<update id="deletePurchaserCategory">
+		UPDATE t_purchaser_category 
+			set modify_time=UNIX_TIMESTAMP()*1000,
+				is_deleted=1
+		WHERE id=#{id}
+	</update>
+</mapper>

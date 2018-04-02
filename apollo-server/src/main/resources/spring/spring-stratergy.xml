@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+			    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+	<!-- 注册逻辑相关的策略 -->
+	<bean id="registerStrategyMap" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<map>
+				<entry key="smsRegisterStrategy">
+					<bean class="com.haitao.apollo.service.user.impl.register.SmsRegisterStrategy"/>
+				</entry>
+				<entry key="inviteCodeRegisterStrategy">
+					<bean class="com.haitao.apollo.service.user.impl.register.InviteCodeRegisterStrategy"/>
+				</entry>
+				<entry key="mobileRegisterStrategy">
+					<bean class="com.haitao.apollo.service.user.impl.register.MobileRegisterStrategy"/>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+	
+	<!-- 预支付逻辑相关的校验策略 -->
+	<bean id="payCallBackStrategyMap" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<map>
+				<entry key="payDepositCallBackStrategy">
+					<bean class="com.haitao.apollo.service.order.impl.pay.PayDepositCallBackStrategy"/>
+				</entry>
+				<entry key="payFinalCallBackStrategy">
+					<bean class="com.haitao.apollo.service.order.impl.pay.PayFinalCallBackStrategy"/>
+				</entry>
+				<entry key="payRechargeCallBackStrategy">
+					<bean class="com.haitao.apollo.service.order.impl.pay.PayRechargeCallBackStrategy"/>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<!-- 晒单逻辑相关的校验策略 -->
+	<bean id="showOrderStrategyMap" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<map>
+				<entry key="userShowStrategy">
+					<bean class="com.haitao.apollo.service.order.impl.show.UserShowStrategy"/>
+				</entry>
+				<entry key="purchaserShowStrategy">
+					<bean class="com.haitao.apollo.service.order.impl.show.PurchaserShowStrategy"/>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<!-- 买手接单相关的校验策略 -->
+	<bean id="purchaserAcceptStrategyMap" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<map>
+				<entry key="postRewardStrategy">
+					<bean class="com.haitao.apollo.service.order.impl.accept.PostRewardStrategy"/>
+				</entry>
+				<entry key="purchaserStrategy">
+					<bean class="com.haitao.apollo.service.order.impl.accept.PurchaserStrategy"/>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<!-- 买手释放到公共池的相关的校验策略 -->
+	<bean id="purchaserReleaseStrategyMap" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<map>
+				<entry key="postRewardReleaseStrategy">
+					<bean class="com.haitao.apollo.service.order.impl.release.PostRewardReleaseStrategy"/>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<!-- 创建销售订单相关的校验策略 -->
+	<bean id="createOrderStrategyMap" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<map>
+				<entry key="saleOrderStrategy">
+					<bean class="com.haitao.apollo.service.order.impl.order.SaleOrderStrategy"/>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<!-- 买手发货相关处理策略 -->
+	<bean id="logisticsOrderShipStrategyMap" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<map>
+				<entry key="purchaserLogisticsShipmentStrategy">
+					<bean class="com.haitao.apollo.service.logistics.impl.ship.PurchaserLogisticsShipmentStrategy"/>
+				</entry>
+				<entry key="purchaserLogisticsAccountStrategy">
+					<bean class="com.haitao.apollo.service.logistics.impl.ship.PurchaserLogisticsAccountStrategy"/>
+				</entry>
+				<entry key="purchaserLogisticsFrozenGuaranteeStrategy">
+					<bean class="com.haitao.apollo.service.logistics.impl.ship.PurchaserLogisticsFrozenGuaranteeStrategy"/>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<!-- #定时任务1# 买手接单超时相关的校验策略 -->
+	<bean id="acceptTimeoutStrategyMap" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<map>
+				<entry key="purchaserAcceptTimeoutStrategy">
+					<bean class="com.haitao.apollo.service.schedule.impl.acept.PurchaserAcceptTimeoutStrategy"/>
+				</entry>
+				<entry key="publicAcceptTimeoutStrategy">
+					<bean class="com.haitao.apollo.service.schedule.impl.acept.PublicAcceptTimeoutStrategy"/>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+	<!-- #定时任务2# 消费者同意发货时间超时的校验策略 -->
+	<bean id="agreeShipmentTimeoutStrategyMap" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<map>
+				<entry key="userAgreeShipmentTimeoutStrategy">
+					<bean class="com.haitao.apollo.service.schedule.impl.agree.UserAgreeShipmentTimeoutStrategy"/>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+	<!-- #定时任务3# 买手发货时间超时的校验策略 -->
+	<bean id="purchaserShipmentTimeoutStrategyMap" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<map>
+				<entry key="purchaserShipmentTimeoutStrategy">
+					<bean class="com.haitao.apollo.service.schedule.impl.shipment.PurchaserShipmentTimeoutStrategy"/>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+	<!-- #定时任务4# 消费者确认收货超时的校验策略 -->
+	<bean id="userConfirmTimeoutStrategyMap" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<map>
+				<entry key="userConfirmTimeoutStrategy">
+					<bean class="com.haitao.apollo.service.schedule.impl.confirm.UserConfirmTimeoutStrategy"/>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+	<!-- #定时任务5# 消费者评价超时的校验策略 -->
+	<bean id="userAppraiseTimeoutStrategyMap" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<map>
+				<entry key="userAppraiseTimeoutStrategy">
+					<bean class="com.haitao.apollo.service.schedule.impl.appraise.UserAppraiseTimeoutStrategy"/>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+</beans> 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.backoperator.BackOperatorDao">
+	<sql id="getBackOperator">
+		select id id,
+			mobile mobile,
+			email email,
+			password password,
+			create_time createTime,
+			modify_time modifyTime
+		from t_back_operator
+	</sql>
+
+	<select id="getBackOperatorByMobileAndPassword" resultType="com.haitao.apollo.pojo.backoperator.BackOperator">
+		<include refid="getBackOperator" /> 
+		where mobile=#{mobile} and password=#{password}
+	</select>
+</mapper>

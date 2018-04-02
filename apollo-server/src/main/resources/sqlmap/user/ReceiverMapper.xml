@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.user.ReceiverDao">
+	<insert id="insertReceiver" parameterType="com.haitao.apollo.vo.user.ReceiverVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_receiver (
+			user_id,
+			receiver,
+			receiver_mobile,
+			province,
+			city,
+			address,
+			postcode,
+			is_default,
+			create_time,
+			modify_time)
+		VALUES
+			(#{userId},
+			 #{receiver}, 
+			 #{receiverMobile}, 
+			 #{province}, 
+			 #{city}, 
+			 #{address}, 
+			 #{postcode}, 
+			 #{isDefault}, 
+			 UNIX_TIMESTAMP()*1000,
+			 UNIX_TIMESTAMP()*1000)
+	</insert>
+	
+	<select id="getReceiverById" resultType="com.haitao.apollo.pojo.user.Receiver">
+		SELECT
+			id id,
+			user_id userId,
+			receiver receiver,
+			receiver_mobile receiverMobile,
+			province province,
+			city city,
+			address address,
+			postcode postcode,
+			is_default isDefault,
+			create_time createTime,
+			modify_time modifyTime
+		FROM
+			t_receiver
+		where id = #{id}	
+	</select>
+	
+	<select id="getReceiverList" resultType="com.haitao.apollo.pojo.user.Receiver">
+		SELECT
+			id id,
+			user_id userId,
+			receiver receiver,
+			receiver_mobile receiverMobile,
+			province province,
+			city city,
+			address address,
+			postcode postcode,
+			is_default isDefault,
+			create_time createTime,
+			modify_time modifyTime
+		FROM
+			t_receiver
+		where user_id = #{userId}	
+		ORDER BY
+			is_default DESC,
+			create_time DESC
+	</select>
+	
+	<select id="getDefaultReceiver" resultType="com.haitao.apollo.pojo.user.Receiver">
+		SELECT
+			id id,
+			user_id userId,
+			receiver receiver,
+			receiver_mobile receiverMobile,
+			province province,
+			city city,
+			address address,
+			postcode postcode,
+			is_default isDefault,
+			create_time createTime,
+			modify_time modifyTime
+		FROM
+			t_receiver
+		WHERE user_id = #{userId} and is_default = 1
+		order by modify_time desc
+		limit 1
+	</select>
+	
+	<update id="updateReceiver" parameterType="com.haitao.apollo.vo.user.ReceiverVo">
+		update t_receiver set modify_time=UNIX_TIMESTAMP()*1000
+		<if test="receiver!=null">
+			,receiver = #{receiver}
+		</if>
+		<if test="receiverMobile!=null">
+			,receiver_mobile = #{receiverMobile}
+		</if>
+		<if test="province!=null">
+			,province = #{province}
+		</if>
+		<if test="city!=null">
+			,city = #{city}
+		</if>
+		<if test="address!=null">
+			,address = #{address}
+		</if>
+		<if test="postcode!=null">
+			,postcode = #{postcode}
+		</if>
+		<if test="isDefault!=null">
+			,is_default = #{isDefault}
+		</if>
+		where id = #{id}
+	</update>
+</mapper>

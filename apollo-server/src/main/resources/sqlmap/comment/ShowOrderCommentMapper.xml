@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.comment.ShowOrderCommentDao">
+	<insert id="insertShowOrderComment" parameterType="com.haitao.apollo.vo.comment.ShowOrderCommentVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_showorder_comment(
+			show_order_id,
+			commenter_id,
+			be_commented_id,
+			comment,
+			is_read,
+			create_time	
+		)values(
+			#{showOrderId},
+			#{commenterId},
+			#{beCommentedId},
+			#{comment},
+			#{isRead},
+			UNIX_TIMESTAMP()*1000
+		)
+	</insert>
+	
+	<sql id="getShowOrderComment">
+		select id id,
+			show_order_id showOrderId,
+			commenter_id commenterId,
+			be_commented_id beCommentedId,
+			comment comment,
+			is_read isRead,
+			create_time createTime
+		from t_showorder_comment
+	</sql>
+
+	<select id="getShowOrderCommentListByShowOrderId" resultType="com.haitao.apollo.pojo.comment.ShowOrderComment">
+		<include refid="getShowOrderComment" /> 
+		where show_order_id=#{showOrderId}
+	</select>
+</mapper>

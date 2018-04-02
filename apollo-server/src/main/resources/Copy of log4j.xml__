@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
+	DEBUG="null" reset="false" threshold="null">
+
+	<appender class="org.apache.log4j.ConsoleAppender" name="console">
+		<param name="Encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%-5p %c{1}] {%x} %m%n" />
+		</layout>
+	</appender>
+	
+	<!-- 主流程日志 -->
+	<appender name="mainlog" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="Encoding" value="UTF-8" />
+		<param name="File" value="${haitao.apollo.log4j.path}/apollo.log" />
+		<param name="DatePattern" value="'-'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{yyyy-MM-dd HH\:mm\:ss,SSS} %5p [%t] (%F\:%L) - %m%n" />
+		</layout>
+	</appender>
+
+	<!-- 定时器日志 -->
+	<appender name="schedulelog" class="org.apache.log4j.DailyRollingFileAppender"> 
+  		<param name="Encoding" value="UTF-8" />   
+        <param name="File" value="${haitao.apollo.log4j.path}/schedule/schedule.log" />
+        <param name="DatePattern" value="'-'yyyy-MM-dd" />
+        <layout class="org.apache.log4j.PatternLayout">  
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH\:mm\:ss,SSS} %5p [%t] (%F\:%L) - %m%n"/>  
+        </layout>  
+	</appender>  
+
+	<!-- 第三方支付日志 -->
+	<appender name="thirdpaylog" class="org.apache.log4j.DailyRollingFileAppender"> 
+  		<param name="Encoding" value="UTF-8" />   
+        <param name="File" value="${haitao.apollo.log4j.path}/thirdpay/thirdpay.log" />
+        <param name="DatePattern" value="'-'yyyy-MM-dd" />
+        <layout class="org.apache.log4j.PatternLayout">  
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH\:mm\:ss,SSS} %5p [%t] (%F\:%L) - %m%n"/>  
+        </layout>  
+	</appender>  
+
+	<category additivity="true" name="com.haitao">
+		<level value="DEBUG" />
+	</category>
+	<category additivity="false" name="com.haitao.apollo.service.schedule">
+		<level value="DEBUG" />
+        <appender-ref ref="schedulelog"/>
+	</category>
+	<category additivity="false" name="com.haitao.apollo.pay.component">
+		<level value="DEBUG" />
+        <appender-ref ref="thirdpaylog"/>
+	</category>
+	<category additivity="true" name="java.sql">
+		<level value="DEBUG" />
+	</category>
+	<category additivity="true" name="com.ibatis">
+		<level value="DEBUG" />
+	</category>
+	<category additivity="true" name="org.mybatis.spring">
+		<level value="DEBUG" />
+	</category>
+	<category additivity="true" name="org.apache.ibatis">
+		<level value="DEBUG" />
+	</category>
+
+	<!-- Root Logger -->
+	<root>
+		<priority value="DEBUG" />
+		<appender-ref ref="mainlog" />
+		<appender-ref ref="console" />
+	</root>
+
+</log4j:configuration>

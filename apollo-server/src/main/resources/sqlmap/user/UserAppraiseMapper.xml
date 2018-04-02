@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.user.UserAppraiseDao">
+	<insert id="insertUserAppraise" parameterType="com.haitao.apollo.vo.user.UserAppraiseVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_user_appraise (
+			user_id,
+			purchaser_id,
+			is_anonym,
+			order_id,
+			score,
+			content,
+			create_time,
+			modify_time
+		)values(
+			#{userId},
+			#{purchaserId},
+			#{isAnonym},
+			#{orderId},
+			#{score},
+			#{content},
+			#{createTime},
+			#{modifyTime}
+		)
+	</insert>
+	
+	<select id="getUserAppraiseByOrderId" resultType="com.haitao.apollo.pojo.user.UserAppraise">
+		select user_id userId,
+			purchaser_id purchaserId,
+			is_anonym isAnonym,
+			order_id orderId,
+			score score,
+			content content,
+			create_time createTime,
+			modify_time modifyTime
+		from t_user_appraise
+		where order_id = #{orderId}
+	</select>
+</mapper>

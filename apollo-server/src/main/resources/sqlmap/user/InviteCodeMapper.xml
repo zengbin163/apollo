@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.user.InviteCodeDao">
+	<insert id="insertInviteCode" parameterType="com.haitao.apollo.vo.user.InviteCodeVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_invitecode (
+			invite_id,
+			invite_role,
+			invite_code,
+			create_time
+		)
+		VALUES
+			(#{inviteId},
+			 #{inviteRole}, 
+			 #{inviteCode}, 
+			 #{createTime})
+	</insert>
+	
+	<select id="getInviteCode" resultType="com.haitao.apollo.pojo.user.InviteCode">
+		select id id,
+				invite_id inviteId,
+				invite_role inviteRole,
+				invite_code inviteCode,
+				create_time createTime
+		from t_invitecode where invite_code=#{inviteCode}
+	</select>
+</mapper>

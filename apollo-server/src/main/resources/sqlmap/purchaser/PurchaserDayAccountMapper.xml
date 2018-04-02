@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.purchaser.PurchaserDayAccountDao">
+	<insert id="insertPurchaserDayAccount" parameterType="com.haitao.apollo.vo.purchaser.PurchaserDayAccountVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_purchaser_day_account (
+			purchaser_id,
+			postreward_id,
+			pay_type,
+			fund_type,
+			is_deleted,
+			pay_amount,
+			pay_serial_no,
+			create_time,
+			modify_time
+		)values(
+			#{purchaserId},
+			#{postrewardId},
+			#{payType},
+			#{fundType},
+			0,
+			#{payAmount},
+			#{paySerialNo},
+			#{createTime},
+			#{modifyTime}
+		)
+	</insert>
+	
+	<select id="getMyDayAccountByPurchaserId" resultType="com.haitao.apollo.pojo.purchaser.PurchaserDayAccount">
+		select purchaser_id purchaserId,
+			postreward_id postrewardId,
+			pay_type payType,
+			fund_type fundType,
+			is_deleted isDeleted,
+			pay_amount payAmount,
+			pay_serial_no paySerialNo,
+			create_time createTime,
+			modify_time modifyTime
+		from t_purchaser_day_account
+		where purchaser_id = #{purchaserId} 
+			and is_deleted=0
+			and FROM_UNIXTIME(create_time/1000,'%m') = #{month}
+	</select>
+</mapper>

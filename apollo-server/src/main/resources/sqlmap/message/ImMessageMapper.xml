@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.message.ImMessageDao">
+	<insert id="insertImMessage" parameterType="com.haitao.apollo.vo.message.ImMessageVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_im_message(
+			from_user_id,
+			to_user_id,
+			from_user_role,
+			to_user_role,
+			content,
+			create_time	
+		)values(
+			#{fromUserId},
+			#{toUserId},
+			#{fromUserRole},
+			#{toUserRole},
+			#{content},
+			#{createTime}
+		)
+	</insert>
+	
+	<select id="getImMessageNameList" resultType="com.haitao.apollo.pojo.message.ImMessage">
+  		SELECT  t1.to_user_id toUserId,
+			    t1.to_user_role toUserRole
+	    FROM t_im_message t1
+		WHERE   t1.from_user_id= #{fromUserId}
+			    and t1.from_user_role=#{fromUserRole} 
+		UNION
+		SELECT  t2.from_user_id toUserId,
+				t2.from_user_role toUserRole
+		FROM t_im_message t2
+		WHERE   t2.to_user_id= #{fromUserId}
+				and t2.to_user_role=#{fromUserRole}
+        LIMIT 10
+	</select>
+
+	<select id="getImMessageByFromTo" resultType="com.haitao.apollo.pojo.message.ImMessage">
+		SELECT content content,
+			create_time createTime
+		FROM t_im_message 
+		WHERE 
+		  (from_user_id=#{fromUserId} and from_user_role=#{fromUserRole} and to_user_id=#{toUserId} and to_user_role=#{toUserRole})
+		  OR
+		  (from_user_id=#{toUserId} and from_user_role=#{toUserRole} and to_user_id=#{fromUserId} and to_user_role=#{fromUserRole})
+		ORDER BY create_time DESC
+		LIMIT 1
+	</select>
+
+	<select id="getImMessageListByFromTo" resultType="com.haitao.apollo.pojo.message.ImMessage">
+		SELECT
+			t1.id id,
+			t1.from_user_id fromUserId,
+			t1.to_user_id toUserId,
+			t1.from_user_role fromUserRole,
+			t1.to_user_role toUserRole,
+			t1.content content,
+			t1.create_time createTime,
+		  	t2.header_url fromHeaderUrl,
+		  	t3.header_url toHeaderUrl,
+			<if test="fromUserRole==0 and toUserRole==0">
+			  	t2.purchaser_name fromNickName,
+			  	t3.purchaser_name toNickName
+		  	</if>
+			<if test="fromUserRole==1 and toUserRole==1">
+			  	t2.nick_name fromNickName,
+			  	t3.nick_name toNickName
+		  	</if>
+			<if test="fromUserRole==0 and toUserRole==1">
+			  	t2.purchaser_name fromNickName,
+			  	t3.nick_name toNickName
+		  	</if>
+			<if test="fromUserRole==1 and toUserRole==0">
+			  	t2.nick_name fromNickName,
+			  	t3.purchaser_name toNickName
+		  	</if>
+		FROM
+			t_im_message t1
+			<if test="fromUserRole==0 and toUserRole==0">
+					LEFT JOIN t_purchaser t2 ON t1.from_user_id = t2.id and t1.from_user_role = 0
+					LEFT JOIN t_purchaser t3 ON t1.to_user_id = t3.id and t1.to_user_role = 0
+			</if>
+			<if test="fromUserRole==1 and toUserRole==1">
+					LEFT JOIN t_user t2 ON t1.from_user_id = t2.id and t1.from_user_role = 1
+					LEFT JOIN t_user t3 ON t1.to_user_id = t3.id and t1.to_user_role = 1
+			</if>
+			<if test="fromUserRole==0 and toUserRole==1">
+					LEFT JOIN t_purchaser t2 ON t1.from_user_id = t2.id and t1.from_user_role = 0
+					LEFT JOIN t_user t3 ON t1.to_user_id = t3.id and t1.to_user_role = 1
+			</if>
+			<if test="fromUserRole==1 and toUserRole==0">
+					LEFT JOIN t_user t2 ON t1.to_user_id = t2.id and t1.from_user_role = 1
+					LEFT JOIN t_purchaser t3 ON t1.from_user_id = t3.id and t1.to_user_role = 0
+			</if>
+		 WHERE
+		  		(t1.from_user_id=#{fromUserId} and t1.to_user_id=#{toUserId} and t1.from_user_role = #{fromUserRole} and t1.to_user_role = #{toUserRole}) 
+						or
+	      		(t1.to_user_id=#{fromUserId} and t1.from_user_id=#{toUserId} and t1.from_user_role = #{toUserRole} and t1.to_user_role = #{fromUserRole})
+	</select>
+</mapper>

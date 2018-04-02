@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.order.LogisticsOrderDao">
+	<insert id="insertLogisticsOrder" parameterType="com.haitao.apollo.vo.order.LogisticsOrderVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_logistics_order (
+			order_id,
+			receiver_id,
+			logistics_company,
+			tracking_no,
+			create_time,
+			modify_time
+		)values(
+			#{orderId},
+			#{receiverId},
+			#{logisticsCompany},
+			#{trackingNo},
+			#{createTime},
+			#{modifyTime}
+		)	
+	</insert>
+	<select id="getLogisticsAddressByOrderId" resultType="com.haitao.apollo.pojo.order.LogisticsOrder">
+		SELECT
+			t1.logistics_company logisticsCompany,
+			t1.tracking_no trackingNo,
+			t2.province province,
+			t2.city city,
+			t2.address address,
+			t2.postcode postcode,
+			t2.receiver receiver,
+			t2.receiver_mobile receiverMobile
+		FROM
+			t_logistics_order t1
+			LEFT JOIN t_receiver t2 ON t1.receiver_id = t2.id
+		where t1.order_id = #{orderId}
+	</select>
+	<select id="getConfirmTimeoutLogisticsOrderList" resultType="com.haitao.apollo.pojo.order.LogisticsOrder">
+		select t2.order_id orderId,
+			t2.receiver_id receiverId,
+			t2.logistics_company logisticsCompany,
+			t2.tracking_no trackingNo,
+			t2.create_time createTime,
+			t2.modify_time modifyTime
+        from t_sale_order t1,t_logistics_order t2
+		where t1.id = t2.order_id
+			and t1.confirm_time is NULL
+			and t1.order_status=203
+		    and #{currentTime}-t2.create_time > #{timestamp}
+	</select>
+	<select id="countConfirmTimeoutLogisticsOrderList" resultType="int">
+		select count(*) 
+		from t_sale_order t1,t_logistics_order t2
+		where t1.id = t2.order_id
+			and t1.confirm_time is NULL
+			and t1.order_status=203
+		    and #{currentTime}-t2.create_time > #{timestamp}
+	</select>
+</mapper>

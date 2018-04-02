@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.order.ShowOrderDao">
+	<insert id="insertShowOrder" parameterType="com.haitao.apollo.vo.order.ShowOrderVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_show_order (
+			order_id,
+			role,
+			operator_id,
+			show_price,
+			content,
+			pic_addr1,
+			pic_addr2,
+			pic_addr3,
+			pic_addr4,
+			pic_addr5,
+			pic_addr6,
+			pic_addr7,
+			pic_addr8,
+			pic_addr9,
+			brand_id,
+			category_id,
+			create_time,
+			modify_time
+		)values(
+			#{orderId},
+			#{role},
+			#{operatorId},
+			#{showPrice},
+			#{content},
+			#{picAddr1},
+			#{picAddr2},
+			#{picAddr3},
+			#{picAddr4},
+			#{picAddr5},
+			#{picAddr6},
+			#{picAddr7},
+			#{picAddr8},
+			#{picAddr9},
+			#{brandId},
+			#{categoryId},
+			#{createTime},
+			#{modifyTime}
+		)	
+	</insert>
+	
+	<sql id="getShowOrder">
+		select id id,
+			order_id orderId,
+			role role,
+			operator_id operatorId,
+			show_price showPrice,
+			content content,
+			pic_addr1 picAddr1,
+			pic_addr2 picAddr2,
+			pic_addr3 picAddr3,
+			pic_addr4 picAddr4,
+			pic_addr5 picAddr5,
+			pic_addr6 picAddr6,
+			pic_addr7 picAddr7,
+			pic_addr8 picAddr8,
+			pic_addr9 picAddr9,
+			brand_id brandId,
+			category_id categoryId,
+			create_time createTime,
+			modify_time modifyTime
+		from t_show_order
+	</sql>
+	
+	<select id="getShowOrderById" resultType="com.haitao.apollo.pojo.order.ShowOrder">
+		<include refid="getShowOrder" />
+		where id = #{id}
+	</select>
+	
+	<select id="getshowOrderByOrderId" resultType="com.haitao.apollo.pojo.order.ShowOrder">
+		<include refid="getShowOrder" />
+		where order_id = #{orderId}
+	</select>
+	
+	<select id="getShowOrderPoolListByOperator" resultType="com.haitao.apollo.pojo.order.ShowOrder">
+		<include refid="getShowOrder" />
+		<where>
+  			<if test="showOrderVo.role!=null">
+				and role = #{showOrderVo.role}
+			</if>
+  			<if test="showOrderVo.operatorId!=null">
+				and operator_id = #{showOrderVo.operatorId}
+			</if>
+  			<if test="showOrderVo.brandId!=null">
+				and brand_id = #{showOrderVo.brandId}
+			</if>
+  			<if test="showOrderVo.categoryId!=null">
+				and category_id = #{showOrderVo.categoryId}
+			</if>
+		</where>
+	</select>
+</mapper>

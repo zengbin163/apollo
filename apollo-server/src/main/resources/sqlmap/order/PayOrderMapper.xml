@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.order.PayOrderDao">
+	<insert id="insertPayOrder" parameterType="com.haitao.apollo.vo.order.PayOrderVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_pay_order (
+			postreward_id,
+			user_id,
+			pay_type,
+			fund_type,
+			pay_amount,
+			pay_serial_no,
+			big_money,
+			pay_by_big,
+			create_time,
+			modify_time,
+			is_deleted
+		)values(
+			#{postrewardId},
+			#{userId},
+			#{payType},
+			#{fundType},
+			#{payAmount},
+			#{paySerialNo},
+			#{bigMoney},
+			#{payByBig},
+			#{createTime},
+			#{modifyTime},
+			0
+		)	
+	</insert>
+	
+	<update id="discardPayOrderById">
+		update t_pay_order set 
+				 modify_time = UNIX_TIMESTAMP()*1000 ,
+				 is_deleted = 1
+		where id = #{id}
+	</update>
+
+	<sql id="getPayOrder">
+		select id id, 			
+			postreward_id postrewardId,
+			user_id userId,
+			pay_type payType,
+			fund_type fundType,
+			pay_amount payAmount,
+			pay_serial_no paySerialNo,
+			big_money bigMoney,
+			pay_by_big payByBig,
+			create_time createTime,
+			modify_time modifyTime
+		from t_pay_order 
+	</sql>
+	
+	<select id="getPayOrderBySerialNo" resultType="com.haitao.apollo.pojo.order.PayOrder">
+		<include refid="getPayOrder" />
+		where pay_serial_no	= #{paySerialNo}
+		 and is_deleted=0 
+	</select>
+	
+	<select id="getPayOrderByPostrewardId" resultType="com.haitao.apollo.pojo.order.PayOrder">
+		<include refid="getPayOrder" />
+		where postreward_id	= #{postrewardId}
+		 and is_deleted=0 
+	</select>
+	
+	<select id="getMyPayOrderListByUserId" resultType="com.haitao.apollo.pojo.order.PayOrder">
+		<include refid="getPayOrder" />
+		where user_id = #{userId} 
+		and is_deleted=0
+		and FROM_UNIXTIME(create_time/1000,'%m') = #{month}
+	</select>
+</mapper>

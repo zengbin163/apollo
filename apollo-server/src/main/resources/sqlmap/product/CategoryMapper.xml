@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.product.CategoryDao">
+	<sql id="getCategory">
+		select id id,
+			category_name categoryName,
+			create_time createTime
+	    from t_category
+	</sql>
+
+	<select id="getCategoryList" resultType="com.haitao.apollo.pojo.product.Category" >
+		<include refid="getCategory" />
+	</select>
+
+	<select id="getCategoryById" resultType="com.haitao.apollo.pojo.product.Category" >
+		<include refid="getCategory" />
+		where id=#{id}
+	</select>
+	
+	<select id="getPostrewardCount" resultType="com.haitao.apollo.pojo.order.PostrewardCount">
+		SELECT
+			t2.id categoryId,
+		
+		IF (
+			tt.number IS NULL,
+			0,
+			tt.number
+		) number
+		FROM
+			t_category t2
+		LEFT JOIN (
+			SELECT
+				t.category_id categoryId,
+				count(*) number
+			FROM
+				t_postreward t
+			WHERE
+				t.reward_status = 101
+			GROUP BY
+				t.category_id
+		) tt ON tt.categoryId = t2.id
+	</select>
+
+	<select id="getPostrewardCountByPurchaser" resultType="com.haitao.apollo.pojo.order.PostrewardCount">
+		SELECT
+			t2.category_id categoryId,
+			IF (
+				tt.number IS NULL,
+				0,
+				tt.number
+			) number
+		FROM
+			t_purchaser_category t2
+		LEFT JOIN (
+			SELECT
+				t.category_id categoryId,
+				count(*) number
+			FROM
+				t_postreward t
+			WHERE
+				t.reward_status = 101
+			AND t.prior_purchaser_id = #{purchaserId}
+			GROUP BY
+				t.category_id
+		) tt ON tt.categoryId = t2.category_id
+		AND t2.purchaser_id = #{purchaserId}
+		AND t2.is_deleted = 0	
+	</select>
+</mapper>

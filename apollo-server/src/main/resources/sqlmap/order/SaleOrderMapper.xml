@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.order.SaleOrderDao">
+	<insert id="insertSaleOrder" parameterType="com.haitao.apollo.vo.order.SaleOrderVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_sale_order (
+			postreward_id,
+			user_id,
+			purchaser_id,
+			order_status,
+			reward_price,
+			product_num,
+			create_time,
+			modify_time
+		)values(
+			#{postrewardId},
+			#{userId},
+			#{purchaserId},
+			#{orderStatus},
+			#{rewardPrice},
+			#{productNum},
+			#{createTime},
+			#{modifyTime}
+		)	
+	</insert>
+	<sql id="getSaleOrder">
+		select id id,			
+			postreward_id postrewardId,
+			user_id userId,
+			purchaser_id purchaserId,
+			order_status orderStatus,
+			refund_status refundStatus,
+			cs_status	csStatus,
+			reward_price rewardPrice,
+			product_num productNum,
+			create_time createTime,
+			modify_time modifyTime
+		from t_sale_order
+	</sql>
+	<select id="getSaleOrderByRewardId" resultType="com.haitao.apollo.pojo.order.SaleOrder">
+		<include refid="getSaleOrder" />
+	    where  postreward_id = #{postrewardId}
+	</select>
+	<select id="getSaleOrderByOrderId" resultType="com.haitao.apollo.pojo.order.SaleOrder" parameterType="java.lang.Integer">
+		<include refid="getSaleOrder" />
+	    where  id = #{id}
+	</select>
+	<select id="getSaleOrderDetailByOrderId" resultType="com.haitao.apollo.pojo.order.SaleOrder" parameterType="java.lang.Integer">
+		SELECT
+			t1.id id,
+			t1.postreward_id postrewardId,
+			t1.user_id userId,
+			t1.purchaser_id purchaserId,
+			t1.order_status  orderStatus,
+			t1.refund_status refundStatus,
+			t1.cs_status	 csStatus,
+			t1.reward_price rewardPrice,
+			t1.product_num productNum,
+			t1.shipment_time shipmentTime,
+			t1.confirm_time confirmTime,
+			t1.create_time createTime,
+			t1.modify_time modifyTime,
+			t2.logistics_company logisticsCompany,
+			t2.tracking_no trackingNo,
+			t3.province province,
+			t3.city city,
+			t3.address address,
+			t3.postcode postcode,
+			t3.receiver receiver,
+			t3.receiver_mobile receiverMobile,
+			t4.accept_time acceptTime,
+			t4.purchaser_day purchaserDay,
+			t4.release_time releaseTime,
+			t4.final_time finalTime,
+			t4.is_public isPublic,
+			t4.require_day requireDay,
+			t4.content content,
+			t4.receiver_id receiverId,
+			t4.reward_status rewardStatus,
+			t4.pic_addr1 picAddr1,
+			t4.pic_addr2 picAddr2,
+			t4.pic_addr3 picAddr3,
+			t4.pic_addr4 picAddr4,
+			t4.pic_addr5 picAddr5,
+			t4.pic_addr6 picAddr6,
+			t4.pic_addr7 picAddr7,
+			t4.pic_addr8 picAddr8,
+			t4.pic_addr9 picAddr9,
+			t4.brand_id brandId,
+			t4.category_id categoryId,
+			t4.source source,
+			t4.source_id sourceId,
+			t5.reason rightsReason,
+			t5.pic_addr1 rightsPicAddr1,
+			t5.pic_addr2 rightsPicAddr2,
+			t5.pic_addr3 rightsPicAddr3
+		FROM t_sale_order t1 JOIN t_postreward t4 ON t1.postreward_id = t4.id
+							 LEFT JOIN t_receiver t3 ON t4.receiver_id = t3.id
+							 LEFT JOIN t_logistics_order t2 ON t1.id = t2.order_id
+							 LEFT JOIN t_user_rights t5 ON t1.id = t5.order_id
+	    WHERE  t1.id = #{id}
+	</select>
+	<select id="getSaleOrderList" resultType="com.haitao.apollo.pojo.order.SaleOrder">
+		SELECT
+			t1.id id,
+			t1.postreward_id postrewardId,
+			t1.user_id userId,
+			t1.purchaser_id purchaserId,
+			t1.order_status  orderStatus,
+			t1.refund_status refundStatus,
+			t1.cs_status	 csStatus,
+			t1.reward_price rewardPrice,
+			t1.product_num productNum,
+			t1.create_time createTime,
+			t1.modify_time modifyTime,
+			t2.accept_time acceptTime,
+			t2.purchaser_day purchaserDay,
+			t2.release_time releaseTime,
+			t2.final_time finalTime,
+			t2.is_public isPublic,
+			t2.require_day requireDay,
+			t2.content content,
+			t2.receiver_id receiverId,
+			t2.reward_status rewardStatus,
+			t2.pic_addr1 picAddr1,
+			t2.pic_addr2 picAddr2,
+			t2.pic_addr3 picAddr3,
+			t2.pic_addr4 picAddr4,
+			t2.pic_addr5 picAddr5,
+			t2.pic_addr6 picAddr6,
+			t2.pic_addr7 picAddr7,
+			t2.pic_addr8 picAddr8,
+			t2.pic_addr9 picAddr9,
+			t2.brand_id brandId,
+			t2.category_id categoryId,
+			t2.source source,
+			t2.source_id sourceId,
+			t3.receiver receiver,
+			t3.province province,
+			t3.city city,
+			t3.address address,
+			t3.receiver_mobile receiverMobile,
+			t3.postcode postcode,
+			t4.logistics_company logisticsCompany,
+			t4.tracking_no trackingNo
+		FROM t_postreward t2 LEFT JOIN t_sale_order t1 ON t1.postreward_id = t2.id
+							 LEFT JOIN t_receiver t3 ON t2.receiver_id = t3.id
+							 LEFT JOIN t_logistics_order t4 ON t1.id = t4.order_id		
+		<where>
+			<if test="saleOrderVo.id!=null">
+				and t1.id = #{saleOrderVo.id}
+			</if>
+			<if test="saleOrderVo.userId!=null">
+				and t1.user_id = #{saleOrderVo.userId}
+			</if>
+			<if test="saleOrderVo.purchaserId!=null">
+				and t1.purchaser_id = #{saleOrderVo.purchaserId}
+			</if>
+			<if test="saleOrderVo.rewardStatus!=null">
+				and t2.reward_status = #{saleOrderVo.rewardStatus}
+			</if>
+			<if test="saleOrderVo.orderStatus!=null">
+				and t1.order_status = #{saleOrderVo.orderStatus}
+			</if>
+			<if test="saleOrderVo.refundStatus!=null">
+				and t1.refund_status = #{saleOrderVo.refundStatus}
+			</if>
+			<if test="saleOrderVo.csStatus!=null">
+				and t1.cs_status = #{saleOrderVo.csStatus}
+			</if>
+			<if test="saleOrderVo.needAppraise!=null and saleOrderVo.needAppraise=0">
+				and not exists (select 1 from t_user_appraise a where a.order_id=t1.id)
+		   		and t1.order_status = 204
+			</if>
+		</where>
+	</select>
+	<select id="getMyOrderCount" resultType="com.haitao.apollo.pojo.order.OrderCount">
+		SELECT
+			t1.reward_status allStatus,
+			IF (t2.number IS NULL, 0, t2.number) number
+		FROM
+			t_reward_status t1
+		LEFT JOIN (
+			SELECT
+				t.reward_status allStatus,
+				count(*) number
+			FROM
+				t_postreward t
+			<where>
+				<if test="userId!=null">
+					and t.user_id = #{userId}
+				</if>
+				<if test="purchaserId!=null">
+					and t.purchaser_id = #{purchaserId}
+				</if>
+			</where>	
+			GROUP BY t.reward_status
+		) t2 on t2.allStatus=t1.reward_status		
+	   ORDER BY t1.reward_status ASC
+	</select>
+	<select id="getMyAppraiseOrderCount" resultType="int">
+		SELECT
+			count(*) number
+		from t_sale_order t
+		where not exists (select 1 from t_user_appraise a where a.order_id=t.id)
+		    and t.order_status = 204
+			<if test="userId!=null">
+				and t.user_id = #{userId}
+			</if>
+			<if test="purchaserId!=null">
+				and t.purchaser_id = #{purchaserId}
+			</if>
+	</select>
+	<select id="getMyRefundOrderCount" resultType="int">
+		SELECT
+			count(*) number
+		from t_sale_order t
+		where t.refund_status = 301
+			<if test="userId!=null">
+				and t.user_id = #{userId}
+			</if>
+			<if test="purchaserId!=null">
+				and t.purchaser_id = #{purchaserId}
+			</if>
+	</select>
+	<update id="updateSaleOrder" parameterType="com.haitao.apollo.vo.order.SaleOrderVo">
+		update t_sale_order set modify_time = UNIX_TIMESTAMP()*1000
+		<if test="saleOrderVo.orderStatus!=null">
+			,order_status=#{saleOrderVo.orderStatus}
+		</if>
+		<if test="saleOrderVo.shipmentTime!=null">
+			,shipment_time=#{saleOrderVo.shipmentTime}
+		</if>
+		<if test="saleOrderVo.purchaserId!=null">
+			,purchaser_id=#{saleOrderVo.purchaserId}
+		</if>
+		<if test="saleOrderVo.confirmTime!=null">
+			,confirm_time=#{saleOrderVo.confirmTime}
+		</if>
+		<if test="saleOrderVo.refundStatus!=null">
+			,refund_status=#{saleOrderVo.refundStatus}
+		</if>
+		<if test="saleOrderVo.csStatus!=null">
+			,cs_status=#{saleOrderVo.csStatus}
+		</if>
+		where id=#{saleOrderVo.id}
+	</update>
+	<select id="getAppraiseTimeoutSaleOrderList" resultType="com.haitao.apollo.pojo.order.SaleOrder">
+	    select t.id id,			
+			t.postreward_id postrewardId,
+			t.user_id userId,
+			t.purchaser_id purchaserId,
+			t.order_status orderStatus,
+			t.refund_status refundStatus,
+			t.cs_status	 csStatus,
+			t.reward_price rewardPrice,
+			t.product_num productNum,
+			t.create_time createTime,
+			t.modify_time modifyTime
+		from t_sale_order t
+		where not exists (select 1 from t_user_appraise a where a.order_id=t.id)
+		   and t.order_status = 204
+		   and #{currentTime}-t.confirm_time > #{timestamp}
+	</select>
+	<select id="countAppraiseTimeoutSaleOrderList" resultType="int">
+	    select count(*)
+		from t_sale_order t
+		where not exists (select 1 from t_user_appraise a where a.order_id=t.id)
+		   and t.order_status = 204
+		   and #{currentTime}-t.confirm_time > #{timestamp}
+	</select>
+</mapper>

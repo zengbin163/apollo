@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.praise.ShowOrderPraiseDao">
+	<insert id="insertShowOrderPraise" parameterType="com.haitao.apollo.vo.praise.ShowOrderPraiseVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_showorder_praise(
+			showorder_id,
+			praiser_id,
+			is_read,
+			create_time	
+		)values(
+			#{showOrderId},
+			#{praiserId},
+			#{isRead},
+			UNIX_TIMESTAMP()*1000
+		)
+	</insert>
+	
+	<sql id="getShowOrderPraise">
+		select id id,
+			showorder_id showOrderId,
+			praiser_id praiserId,
+			is_read isRead,
+			create_time createTime
+		from t_showorder_praise
+	</sql>
+
+	<select id="getShowOrderPraiseListByShowOrderId" resultType="com.haitao.apollo.pojo.praise.ShowOrderPraise">
+		<include refid="getShowOrderPraise" /> 
+		where showorder_id=#{showOrderId}
+	</select>
+	
+	<select id="countShowOrderPraise" resultType="int">
+		select count(*) from t_showorder_praise where showorder_id=#{showOrderId}
+	</select>
+</mapper>

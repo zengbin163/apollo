@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.order.PostRewardDao">
+	<insert id="insertPostReward" parameterType="com.haitao.apollo.vo.order.PostRewardVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_postreward (
+			user_id,
+			prior_purchaser_id,
+			is_public,
+			reward_price,
+			product_num,
+			require_day,
+			content,
+			receiver_id,
+			reward_status,
+			pic_addr1,
+			pic_addr2,
+			pic_addr3,
+			pic_addr4,
+			pic_addr5,
+			pic_addr6,
+			pic_addr7,
+			pic_addr8,
+			pic_addr9,
+			brand_id,
+			category_id,
+			source,
+			source_id,
+			create_time,
+			modify_time
+		)values(
+			#{userId},
+			#{priorPurchaserId},
+			#{isPublic},
+			#{rewardPrice},
+			#{productNum},
+			#{requireDay},
+			#{content},
+			#{receiverId},
+			#{rewardStatus},
+			#{picAddr1},
+			#{picAddr2},
+			#{picAddr3},
+			#{picAddr4},
+			#{picAddr5},
+			#{picAddr6},
+			#{picAddr7},
+			#{picAddr8},
+			#{picAddr9},
+			#{brandId},
+			#{categoryId},
+			#{source},
+			#{sourceId},
+			#{createTime},
+			#{modifyTime}
+		)	
+	</insert>
+	
+	<update id="updatePostRewardById" parameterType="com.haitao.apollo.vo.order.PostRewardVo" > 
+		update t_postreward set modify_time = UNIX_TIMESTAMP()*1000
+		<if test="postRewardVo.rewardStatus!=null">
+			,reward_status = #{postRewardVo.rewardStatus}
+		</if>
+		<if test="postRewardVo.purchaserId!=null">
+			,purchaser_id = #{postRewardVo.purchaserId}
+		</if>
+		<if test="postRewardVo.isPublic!=null">
+			,is_public = #{postRewardVo.isPublic}
+		</if>
+		<if test="postRewardVo.priorPurchaserId!=null">
+			,prior_purchaser_id = #{postRewardVo.priorPurchaserId}
+		</if>
+		<if test="postRewardVo.acceptTime!=null">
+			,accept_time = #{postRewardVo.acceptTime}
+		</if>
+		<if test="postRewardVo.releaseTime!=null">
+			,release_time = #{postRewardVo.releaseTime}
+		</if>
+		<if test="postRewardVo.purchaserDay!=null">
+			,purchaser_day = #{postRewardVo.purchaserDay}
+		</if>
+		<if test="postRewardVo.finalTime!=null">
+			,final_time = #{postRewardVo.finalTime}
+		</if>
+		<if test="postRewardVo.rewardPrice!=null">
+			,reward_price = #{postRewardVo.rewardPrice}
+		</if>
+		where id = #{postRewardVo.id}
+	</update>
+	
+	<sql id="getPostReward">
+		select id id,
+			user_id userId,
+			prior_purchaser_id priorPurchaserId,
+			purchaser_id purchaserId,
+			accept_time acceptTime,
+			purchaser_day purchaserDay,
+			release_time releaseTime,
+			final_time finalTime,
+			is_public isPublic,
+			reward_price rewardPrice,
+			product_num productNum,
+			require_day requireDay,
+			content content,
+			receiver_id receiverId,
+			reward_status rewardStatus,
+			pic_addr1 picAddr1,
+			pic_addr2 picAddr2,
+			pic_addr3 picAddr3,
+			pic_addr4 picAddr4,
+			pic_addr5 picAddr5,
+			pic_addr6 picAddr6,
+			pic_addr7 picAddr7,
+			pic_addr8 picAddr8,
+			pic_addr9 picAddr9,
+			brand_id brandId,
+			category_id categoryId,
+			source source,
+			source_id sourceId,
+			create_time createTime,
+			modify_time modifyTime,
+			 <![CDATA[
+			 case  
+				when reward_status=101 && is_public=0 then (create_time+24*60*60*1000-UNIX_TIMESTAMP()*1000)
+				when reward_status=101 && is_public=1 then (release_time+48*60*60*1000-UNIX_TIMESTAMP()*1000)
+				when reward_status=103 then (final_time+purchaser_day*24*60*60*1000-UNIX_TIMESTAMP()*1000)
+			    else 0 end clock
+			 ]]>   
+		from t_postreward
+	</sql>
+	
+	<select id="getPostRewardById" resultType="com.haitao.apollo.pojo.order.PostReward">
+		<include refid="getPostReward" />
+		where id = #{id}
+	</select>
+	
+	<select id="getPostRewardList" resultType="com.haitao.apollo.pojo.order.PostReward">
+		<include refid="getPostReward" />
+		<where>
+		    reward_status = #{rewardStatus}
+		    and user_id = #{userId}
+		</where>
+	</select>
+
+	<select id="getPostRewardPoolListByUser" resultType="com.haitao.apollo.pojo.order.PostReward">
+		<include refid="getPostReward" />
+		<where>
+		    reward_status = 101
+  			<if test="postRewardVo.brandId!=null">
+				and brand_id = #{postRewardVo.brandId}
+			</if>
+  			<if test="postRewardVo.categoryId!=null">
+				and category_id = #{postRewardVo.categoryId}
+			</if>
+		</where>
+	</select>
+
+	<select id="getPostRewardSquareListByPurchaser" resultType="com.haitao.apollo.pojo.order.PostReward">
+		<include refid="getPostReward" />
+		<where>
+			is_public = 1
+			and reward_status = 101
+  			<if test="postRewardVo.brandId!=null">
+				and brand_id = #{postRewardVo.brandId}
+			</if>
+			<if test="postRewardVo.categoryId!=null">
+				and category_id = #{postRewardVo.categoryId}
+			</if>
+		</where>
+	</select>
+
+	<select id="getPostRewardListByPurchaser" resultType="com.haitao.apollo.pojo.order.PostReward">
+		<include refid="getPostReward" />
+		<where>
+			prior_purchaser_id = #{postRewardVo.priorPurchaserId}
+			and purchaser_id is null
+			and reward_status = #{postRewardVo.rewardStatus}
+  			<if test="postRewardVo.isPublic!=null">
+				and is_public = #{postRewardVo.isPublic}
+			</if>
+  			<if test="postRewardVo.brandId!=null">
+				and brand_id = #{postRewardVo.brandId}
+			</if>
+			<if test="postRewardVo.categoryId!=null">
+				and category_id = #{postRewardVo.categoryId}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getAcceptTimeoutPostRewardList" resultType="com.haitao.apollo.pojo.order.PostReward">
+		<include refid="getPostReward" />
+		where reward_status=101
+			  <if test="isPurchaser==0">
+			     and purchaser_id is null
+			  	 and is_public = 0
+			  	 and #{currentTime}-create_time > #{timestamp}
+			  </if>
+			  <if test="isPurchaser==1">
+			  	 and is_public = 1
+			  	 and #{currentTime}-release_time > #{timestamp}
+			  </if>
+	</select>
+
+	<select id="countAcceptTimeoutPostRewardList" resultType="int">
+		select count(*) from t_postreward
+		where reward_status=101
+			  <if test="isPurchaser==0">
+			     and purchaser_id is null
+			  	 and is_public = 0
+			  	 and #{currentTime}-create_time > #{timestamp}
+			  </if>
+			  <if test="isPurchaser==1">
+			  	 and is_public = 1
+			  	 and #{currentTime}-release_time > #{timestamp}
+			  </if>
+	</select>
+
+	<select id="getAgreeShipmentTimeoutPostRewardList" resultType="com.haitao.apollo.pojo.order.PostReward">
+		<include refid="getPostReward" />
+		where reward_status=102
+			  and purchaser_id is not null
+			  and #{currentTime}-accept_time > #{timestamp}
+	</select>
+
+	<select id="countAgreeShipmentTimeoutPostRewardList" resultType="int">
+		select count(*) from t_postreward
+		where reward_status=102
+			  and purchaser_id is not null
+			  and #{currentTime}-accept_time > #{timestamp}
+	</select>
+
+	<select id="getShipmentTimeoutPostRewardList" resultType="com.haitao.apollo.pojo.order.PostReward">
+		<include refid="getPostReward" />
+		where reward_status=103
+			  and purchaser_id is not null
+			  and #{currentTime}-final_time > (purchaser_day * 24*60*60*1000)
+	</select>
+
+	<select id="countShipmentTimeoutPostRewardList" resultType="int">
+		select count(*) from t_postreward
+		where reward_status=103
+			  and purchaser_id is not null
+			  and #{currentTime}-final_time > (purchaser_day * 24*60*60*1000)
+	</select>
+	
+	<select id="countFollowPostrewardBySourceId" resultType="int">
+		select count(*) 
+			from t_postreward
+		where source = #{source} and source_id = #{sourceId}
+	</select>
+</mapper>

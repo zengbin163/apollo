@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.comment.PostrewardCommentDao">
+	<insert id="insertPostrewardComment" parameterType="com.haitao.apollo.vo.comment.PostrewardCommentVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_postreward_comment(
+			postreward_id,
+			commenter_id,
+			be_commented_id,
+			comment,
+			is_read,
+			create_time	
+		)values(
+			#{postrewardId},
+			#{commenterId},
+			#{beCommentedId},
+			#{comment},
+			#{isRead},
+			UNIX_TIMESTAMP()*1000
+		)
+	</insert>
+	
+	<sql id="getPostrewardComment">
+		select id id,
+			postreward_id postrewardId,
+			commenter_id commenterId,
+			be_commented_id beCommentedId,
+			comment comment,
+			is_read isRead,
+			create_time createTime
+		from t_postreward_comment
+	</sql>
+
+	<select id="getPostrewardCommentListByPostrewardId" resultType="com.haitao.apollo.pojo.comment.PostrewardComment">
+		<include refid="getPostrewardComment" /> 
+		where postreward_id=#{postrewardId}
+	</select>
+</mapper>

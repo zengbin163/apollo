@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.purchaser.PurchaserDao">
+	<sql id="getPurchaser">
+		select id id,
+			purchaser_name purchaserName,
+			mobile mobile,
+			password password,
+			register_time registerTime,
+			last_login_time lastLoginTime,
+			modify_time modifyTime,
+			header_url headerUrl,
+			signature signature,
+			is_active isActive,
+			guarantee guarantee,
+			quota quota,
+			account account,
+			vip vip,
+			quantity quantity,
+			version version,
+			device_id deviceId,
+			token token
+		from t_purchaser	
+	</sql>
+	<select id="getPurchaserByMobileAndPassword" resultType="com.haitao.apollo.pojo.purchaser.Purchaser">
+		<include refid="getPurchaser" />
+		where mobile=#{mobile} and password=#{password} and is_active=1
+	</select>
+	<select id="getPurchaserByMobile" resultType="com.haitao.apollo.pojo.purchaser.Purchaser">
+		<include refid="getPurchaser" />
+		where mobile=#{mobile} and is_active=1
+	</select>
+	<select id="getPurchaserById" resultType="com.haitao.apollo.pojo.purchaser.Purchaser">
+		<include refid="getPurchaser" />
+		where id=#{id} and is_active=1
+	</select>
+	<select id="getPurchaserList" resultType="com.haitao.apollo.pojo.purchaser.Purchaser">
+		<include refid="getPurchaser" />
+	</select>
+	<update id="updatePurchaserById" parameterType="com.haitao.apollo.vo.purchaser.PurchaserVo">
+		update t_purchaser set modify_time = UNIX_TIMESTAMP()*1000
+		<if test="purchaserVo.purchaserName!=null">
+			,purchaser_name = #{purchaserVo.purchaserName}
+		</if>
+		<if test="purchaserVo.password!=null">
+			,password = #{purchaserVo.password}
+		</if>
+		<if test="purchaserVo.lastLoginTime!=null">
+			,last_login_time = #{purchaserVo.lastLoginTime}
+		</if>
+		<if test="purchaserVo.headerUrl!=null">
+			,header_url = #{purchaserVo.headerUrl}
+		</if>
+		<if test="purchaserVo.signature!=null">
+			,signature = #{purchaserVo.signature}
+		</if>
+		<if test="purchaserVo.isActive!=null">
+			,is_active = #{purchaserVo.isActive}
+		</if>
+		<if test="purchaserVo.guarantee!=null">
+			,guarantee = #{purchaserVo.guarantee}
+		</if>
+		<if test="purchaserVo.quota!=null">
+			,quota = #{purchaserVo.quota}
+		</if>
+		<if test="purchaserVo.account!=null">
+			,account = #{purchaserVo.account}
+		</if>
+		<if test="purchaserVo.vip!=null">
+			,vip = #{purchaserVo.vip}
+		</if>
+		<if test="purchaserVo.quantity!=null">
+			,quantity = #{purchaserVo.quantity}
+		</if>
+		<if test="purchaserVo.version!=null">
+			,version = #{purchaserVo.version}
+		</if>
+		<if test="purchaserVo.deviceId!=null">
+			,device_id = #{purchaserVo.deviceId}
+		</if>
+		<if test="purchaserVo.token!=null">
+			,token = #{purchaserVo.token}
+		</if>
+		<![CDATA[
+			where id = #{purchaserVo.id} and version < #{purchaserVo.version}
+		]]>	
+	</update>
+	
+	<insert id="insertPurchaser" parameterType="com.haitao.apollo.vo.purchaser.PurchaserVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_purchaser (
+			device_id,
+			purchaser_name,
+			mobile,
+			password,
+			signature,
+			register_time,
+			last_login_time,
+			header_url,
+			guarantee,
+			quota,
+			account,
+			vip,
+			quantity,
+			modify_time,
+			version,
+			is_active
+		)
+		VALUES(
+			#{deviceId},
+			#{purchaserName},
+			#{mobile},
+			#{password},
+			#{signature},
+			#{registerTime},
+			#{lastLoginTime},
+			#{headerUrl},
+			#{guarantee},
+			#{quota},
+			#{account},
+			#{vip},
+			#{quantity},
+			#{modifyTime},
+			1,
+			1
+		)
+	</insert>
+
+	<insert id="insertPurchaserInfo" parameterType="com.haitao.apollo.vo.purchaser.PurchaserInfoVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_purchaser_info (
+			purchaser_id,
+			alipay_account,
+			bank_name,
+			bank_account,
+			email,
+			sex,
+			birth,
+			address,
+			id_card_front_url,
+			id_card_back_url,
+			student_id_card_url,
+			vip_card_url,
+			credit_card_acc_url,
+			live_forever_url,
+			utility_bill_url,
+			mobile_bill_url,
+			web_service_url,
+			driving_licence_url,
+			overseas_prove_url,
+			create_time,
+			modify_time
+		)
+		VALUES(
+			#{purchaserId},
+			#{alipayAccount},
+			#{bankName},
+			#{bankAccount},
+			#{email},
+			#{sex},
+			#{birth},
+			#{address},
+			#{idCardFrontUrl},
+			#{idCardBackUrl},
+			#{studentIdCardUrl},
+			#{vipCardUrl},
+			#{creditCardAccUrl},
+			#{liveForeverUrl},
+			#{utilityBillUrl},
+			#{mobileBillUrl},
+			#{webServiceUrl},
+			#{drivingLicenceUrl},
+			#{overseasProveUrl},
+			#{createTime},
+			#{modifyTime}
+		)
+	</insert>
+</mapper>

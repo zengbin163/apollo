@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.praise.PostrewardPraiseDao">
+	<insert id="insertPostrewardPraise" parameterType="com.haitao.apollo.vo.praise.PostrewardPraiseVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_postreward_praise(
+			postreward_id,
+			praiser_id,
+			is_read,
+			create_time	
+		)values(
+			#{postrewardId},
+			#{praiserId},
+			#{isRead},
+			UNIX_TIMESTAMP()*1000
+		)
+	</insert>
+	
+	<sql id="getPostrewardPraise">
+		select id id,
+			postreward_id postrewardId,
+			praiser_id praiserId,
+			is_read isRead,
+			create_time createTime
+		from t_postreward_praise
+	</sql>
+
+	<select id="getPostrewardPraiseListByPostrewardId" resultType="com.haitao.apollo.pojo.praise.PostrewardPraise">
+		<include refid="getPostrewardPraise" /> 
+		where postreward_id=#{postrewardId}
+	</select>
+</mapper>

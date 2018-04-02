@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.message.MessageBoxDao">
+	<insert id="insertMessageBox" parameterType="com.haitao.apollo.vo.message.MessageBoxVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_message_box(
+			box_type,
+			box_content,
+			operator_role,
+			operator_id,
+			create_time,	
+			modify_time
+		)values(
+			#{boxType},
+			#{boxContent},
+			#{operatorRole},
+			#{operatorId},
+			#{createTime},
+			#{modifyTime}
+		)
+	</insert>
+
+	<select id="getMessageBox" resultType="com.haitao.apollo.pojo.message.MessageBox">
+		SELECT
+			id id,
+			box_type boxType,
+			box_content boxContent,
+			operator_role operatorRole,
+			operator_id operatorId,
+			create_time createTime,
+			modify_time modifyTime
+		FROM t_message_box
+		where operator_role = #{operatorRole} 
+		and operator_id = #{operatorId}
+		and box_type = #{boxType}
+		order by create_time desc
+		limit 1
+	</select>
+
+	<select id="getMessageBoxList" resultType="com.haitao.apollo.pojo.message.MessageBox">
+		SELECT
+			id id,
+			box_type boxType,
+			box_content boxContent,
+			operator_role operatorRole,
+			operator_id operatorId,
+			create_time createTime,
+			modify_time modifyTime
+		FROM t_message_box
+		where operator_role = #{operatorRole} 
+		and operator_id = #{operatorId}
+		and box_type = #{boxType}
+	</select>
+</mapper>

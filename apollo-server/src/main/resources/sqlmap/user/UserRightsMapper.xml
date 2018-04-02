@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.haitao.apollo.dao.user.UserRightsDao">
+	<insert id="insertUserRights" parameterType="com.haitao.apollo.vo.user.UserRightsVo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_user_rights (
+			user_id,
+			purchaser_id,
+			order_id,
+			reason,
+			pic_addr1,
+			pic_addr2,
+			pic_addr3,
+			cs_status,
+			create_time,
+			modify_time)
+		VALUES
+			(#{userId},
+			 #{purchaserId}, 
+			 #{orderId}, 
+			 #{reason}, 
+			 #{picAddr1}, 
+			 #{picAddr2}, 
+			 #{picAddr3}, 
+			 #{csStatus}, 
+			 #{createTime},
+			 #{modifyTime})
+	</insert>
+	
+	<update id="updateUserRights" parameterType="com.haitao.apollo.vo.user.UserRightsVo">
+		update t_user_rights set modify_time = UNIX_TIMESTAMP()*1000
+		<if test="userRightsVo.csStatus!=null">
+			,cs_status=#{userRightsVo.csStatus}
+		</if>
+		where order_id=#{userRightsVo.orderId}
+	</update>
+	
+	<select id="getUserRightsCountByOrderId" resultType="int">
+		select count(*) from t_user_rights where order_id = #{orderId}
+	</select>
+</mapper>
